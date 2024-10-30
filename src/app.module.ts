@@ -1,10 +1,33 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './auth/guard/auth.guard';
+import { ConfigModule } from '@nestjs/config';
+import configuration from './config/config';
+import { MailModule } from './mail/mail.module';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
-  imports: [],
+  imports: [
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+      isGlobal: true,
+      load: [configuration],
+    }),
+    DatabaseModule,
+    MailModule,
+    AuthModule,
+    UserModule,
+  ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
-export class AppModule {}
