@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { SignUpDto } from 'src/user/dto/signup-user.dto';
 import { LoginDto } from 'src/user/dto/login-user.dto';
 import { UserService } from 'src/user/user.service';
@@ -35,6 +39,9 @@ export class AuthService {
     const user: UserDocument = await this.userService.findUserByEmail(
       loginDto.email,
     );
+    if (!user) {
+      throw new NotFoundException('User does not exist');
+    }
 
     const isMatch = await this.comparePassword(
       loginDto.password,

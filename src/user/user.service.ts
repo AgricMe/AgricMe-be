@@ -28,12 +28,11 @@ export class UserService {
   }
 
   async findOne(userId: string): Promise<UserDocument> {
-    try {
-      const user = await this.userModel.findById(userId, '-password');
-      return user;
-    } catch (error) {
-      throw new NotFoundException(`User with id ${userId} is not found`, error);
+    const user = await this.userModel.findById(userId, '-password');
+    if (!user) {
+      throw new NotFoundException(`User with id ${userId} is not found`);
     }
+    return user;
   }
 
   async findUserByEmail(email: string): Promise<UserDocument> {
