@@ -67,13 +67,13 @@ export class SignUpDto {
     ],
   })
   @IsArray()
-  @IsEnum([Interests], { each: true })
+  @IsEnum(Interests, { each: true })
   @IsNotEmpty()
   interest: Interests[];
 
   @ApiProperty({ example: [RoleNames.SERVICE_PROVIDER] })
   @IsArray()
-  @IsEnum([RoleNames], { each: true })
+  @IsEnum(RoleNames, { each: true })
   @IsNotEmpty()
   role: RoleNames[];
 }

@@ -76,10 +76,10 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @Delete('email')
+  @Delete(':email')
   @Roles([RoleNames.BUYER, RoleNames.SELLER, RoleNames.SERVICE_PROVIDER])
-  @ApiOperation({ summary: 'Delete User' })
-  deleteUserByEmail(@Body('email') email: string) {
+  @ApiOperation({ summary: 'Delete User By Email' })
+  deleteUserByEmail(@Param('email') email: string) {
     return this.userService.deleteUser(email);
   }
 }
