@@ -35,9 +35,13 @@ export class AuthGuard implements CanActivate {
     const roles: RoleNames[] = this.reflector.get(Roles, context.getHandler());
 
     if (roles && roles.length > 0) {
-      if (!roles.includes(user.role)) {
-        throw new UnauthorizedException(`Only ${roles.join(',')} have access`);
-      }
+      user.role.forEach((role: RoleNames) => {
+        if (!roles.includes(role)) {
+          throw new UnauthorizedException(
+            `Only ${roles.join(',')} have access`,
+          );
+        }
+      });
     }
 
     return true;

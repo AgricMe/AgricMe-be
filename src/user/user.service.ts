@@ -62,4 +62,15 @@ export class UserService {
       });
     }
   }
+
+  async deleteUser(email: string) {
+    const user = await this.userModel
+      .findOneAndDelete({ email })
+      .select('-password');
+    return {
+      success: true,
+      message: `User with email ${email} has been deleted`,
+      data: user,
+    };
+  }
 }

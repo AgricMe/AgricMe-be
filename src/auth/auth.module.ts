@@ -5,6 +5,7 @@ import { UserModule } from 'src/user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailModule } from 'src/mail/mail.module';
+import { UtilModule } from 'src/utils/utils.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { MailModule } from 'src/mail/mail.module';
         };
       },
     }),
+    UtilModule,
     UserModule,
     MailModule,
   ],

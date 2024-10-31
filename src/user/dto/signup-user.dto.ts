@@ -1,12 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsArray,
   IsEmail,
   IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
 } from 'class-validator';
-import { RoleNames } from '../enums';
+import { Interests, RoleNames } from '../enums';
 
 export class SignUpDto {
   @ApiProperty({ example: 'jane' })
@@ -18,6 +19,11 @@ export class SignUpDto {
   @IsString()
   @IsNotEmpty()
   lastName: string;
+
+  @ApiProperty({ example: 'janedoe123' })
+  @IsString()
+  @IsNotEmpty()
+  userName: string;
 
   @ApiProperty({ example: 'janedoe@gmail.com' })
   @IsEmail()
@@ -31,9 +37,43 @@ export class SignUpDto {
 
   @IsString()
   @IsOptional()
-  profilePicture: string;
+  profilePicture?: string;
 
+  @ApiProperty({ example: 'About yourself' })
+  @IsString()
+  @IsNotEmpty()
+  bio: string;
+
+  @ApiProperty({ example: '+2347020654422' })
+  @IsString()
+  @IsNotEmpty()
+  phoneNumber: string;
+
+  @ApiProperty({ example: 'Ibadan, Oyo State' })
+  @IsString()
+  @IsNotEmpty()
+  location: string;
+
+  @ApiProperty({ example: 'Irrigation Specialist' })
+  @IsString()
+  @IsNotEmpty()
+  job: string;
+
+  @ApiProperty({
+    example: [
+      Interests.SERVICE_PROVIDER,
+      Interests.ANIMAL_PRODUCTION,
+      Interests.FARMING,
+    ],
+  })
+  @IsArray()
+  @IsEnum([Interests], { each: true })
+  @IsNotEmpty()
+  interest: Interests[];
+
+  @ApiProperty({ example: [RoleNames.SERVICE_PROVIDER] })
+  @IsArray()
   @IsEnum([RoleNames], { each: true })
-  @IsOptional()
-  role: RoleNames;
+  @IsNotEmpty()
+  role: RoleNames[];
 }

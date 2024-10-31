@@ -6,6 +6,7 @@ import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { UserDocument } from 'src/user/schema/user.schema';
 import { MailService } from 'src/mail/mail.service';
+import { UtilService } from 'src/utils/utils.service';
 
 @Injectable()
 export class AuthService {
@@ -13,20 +14,21 @@ export class AuthService {
     private userService: UserService,
     private jwtService: JwtService,
     private mailService: MailService,
+    private utilService: UtilService,
   ) {}
 
   async register(signUpDto: SignUpDto): Promise<Partial<UserDocument>> {
-    const { _id, firstName, lastName, email, role, profilePicture, __v } =
-      await this.userService.create(signUpDto);
+    const user = await this.userService.create(signUpDto);
+    const updatedUser = await this.utilService.excludePassword(user);
     await this.mailService.sendMail({
-      to: email,
-      subject: 'RenphaConsulting - Registration Successful',
+      to: user.email,
+      subject: 'AgricMe - Registration Successful',
       template: 'registration',
       context: {
-        firstName,
+        firstName: user.firstName,
       },
     });
-    return { _id, firstName, lastName, email, role, profilePicture, __v };
+    return updatedUser;
   }
 
   async login(loginDto: LoginDto): Promise<string> {

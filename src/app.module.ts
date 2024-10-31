@@ -1,4 +1,4 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import configuration from './config/config';
 import { MailModule } from './mail/mail.module';
 import { DatabaseModule } from './database/database.module';
+import { UtilModule } from './utils/utils.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { DatabaseModule } from './database/database.module';
     }),
     DatabaseModule,
     MailModule,
+    UtilModule,
     AuthModule,
     UserModule,
   ],
@@ -31,3 +33,4 @@ import { DatabaseModule } from './database/database.module';
     },
   ],
 })
+export class AppModule {}
