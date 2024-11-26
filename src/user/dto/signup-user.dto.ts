@@ -35,6 +35,10 @@ export class SignUpDto {
   @IsNotEmpty()
   password: string;
 
+  @ApiProperty({
+    example:
+      'https://res.cloudinary.com/dynopc0cn/image/upload/v1728734784/avatar_ym1ctb.jpg',
+  })
   @IsString()
   @IsOptional()
   profilePicture?: string;
