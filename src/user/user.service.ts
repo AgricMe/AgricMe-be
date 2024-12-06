@@ -8,11 +8,15 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from './schema/user.schema';
 import { Model } from 'mongoose';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UpdateCompanyDto } from './dto/update-company.dto';
+import { Company, CompanyDocument } from './schema/company.schema';
+import { CreateCompanyDto } from './dto/create-company.dto';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+    @InjectModel(Company.name) private readonly companyModel: Model<CompanyDocument>
   ) {}
   async create(signUpDto: SignUpDto): Promise<UserDocument> {
     const userExists = await this.findUserByEmail(signUpDto.email);
@@ -60,6 +64,42 @@ export class UserService {
         cause: error,
       });
     }
+  }
+
+  async createUserCompany(createCompanyDto: CreateCompanyDto): Promise<CompanyDocument> {
+    const companyExists = await this.companyModel.findOne({email: createCompanyDto.email});
+    if (companyExists) {
+      throw new BadRequestException(`Company with this email already exists`);
+    }
+    const company = await this.companyModel.create(createCompanyDto);
+    return company;
+  }
+
+  async findUserCompany(companyId: string): Promise<CompanyDocument> {
+    const company = await this.companyModel.findById(companyId);
+    if (!company) {
+      throw new NotFoundException(`Company with id ${companyId} does not exist`);
+    }
+    return company;
+  }
+
+  async updateUserCompany(
+    companyId: string,
+    updateCompanyDto: UpdateCompanyDto,
+  ): Promise<CompanyDocument> {
+      const company = await this.companyModel.findById(companyId);
+      if(!company){
+        throw new NotFoundException(`Company with id ${companyId} does not exist`);
+      }
+      await this.companyModel.findByIdAndUpdate(
+        companyId,
+        updateCompanyDto,
+        {
+          new: true,
+          runValidators: true,
+        },
+      );
+      return company;
   }
 
   async deleteUser(email: string) {

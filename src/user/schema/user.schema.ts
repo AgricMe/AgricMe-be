@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import { Interests, RoleNames, VerificationStatus } from '../enums';
+import { Company } from './company.schema';
 
 @Schema({ timestamps: true })
 export class User {
@@ -40,6 +41,11 @@ export class User {
     required: true,
   })
   job: string;
+
+  @Prop({
+    type: Types.ObjectId, ref: Company.name
+  })
+  company?: Company;
 
   @Prop({
     type: [String],

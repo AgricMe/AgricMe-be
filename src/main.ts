@@ -26,7 +26,7 @@ async function bootstrap() {
     .setDescription('AgriTech App API Documentation')
     .setVersion('1.0.0')
     .addBearerAuth()
-    .addServer('https://agricme-be.onrender.com')
+    // .addServer('https://agricme-be.onrender.com')
     .build();
   const swaggerDoc = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('/docs', app, swaggerDoc);

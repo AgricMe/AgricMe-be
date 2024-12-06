@@ -1,10 +1,12 @@
-import { Controller, Get, Param, Put, Body, Delete } from '@nestjs/common';
+import { Controller, Get, Param, Put, Body, Delete, Post } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserDocument } from './schema/user.schema';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Auth, Roles } from 'src/auth/guard/auth.decorator';
 import { RoleNames } from './enums';
+import { UpdateCompanyDto } from './dto/update-company.dto';
+import { CreateCompanyDto } from './dto/create-company.dto';
 
 @Controller('user')
 @ApiTags('User')
@@ -73,6 +75,37 @@ export class UserController {
     @Body() updateUserDto: UpdateUserDto,
   ) {
     return this.userService.updateUser(userId, updateUserDto);
+  }
+
+  @ApiBearerAuth()
+  @Post('company')
+  @Roles([RoleNames.SELLER, RoleNames.SERVICE_PROVIDER])
+  @ApiOperation({ summary: 'Create User Company' })
+  createCompany(
+    @Body() createCompanyDto: CreateCompanyDto,
+  ) {
+    return this.userService.createUserCompany(createCompanyDto);
+  }
+
+  @ApiBearerAuth()
+  @Get('company/:companyId')
+  @Roles([RoleNames.SELLER, RoleNames.SERVICE_PROVIDER])
+  @ApiOperation({ summary: 'Get User\'s Company Profile' })
+  getCompanyProfile(
+    @Param('companyId') companyId: string,
+  ) {
+    return this.userService.findUserCompany(companyId);
+  }
+
+  @ApiBearerAuth()
+  @Put('company/:companyId')
+  @Roles([RoleNames.SELLER, RoleNames.SERVICE_PROVIDER])
+  @ApiOperation({ summary: 'Update User\'s Company Profile' })
+  updateCompanyProfile(
+    @Param('companyId') companyId: string,
+    @Body() updateCompanyDto: UpdateCompanyDto,
+  ) {
+    return this.userService.updateUserCompany(companyId, updateCompanyDto);
   }
 
   @ApiBearerAuth()
