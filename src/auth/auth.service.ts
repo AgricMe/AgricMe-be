@@ -43,7 +43,7 @@ export class AuthService {
       throw new NotFoundException('User does not exist');
     }
 
-    const isMatch = await this.comparePassword(
+    const isMatch = await this.utilService.comparePassword(
       loginDto.password,
       user.password,
     );
@@ -51,11 +51,5 @@ export class AuthService {
       throw new BadRequestException('Incorrect password');
     }
     return await this.jwtService.signAsync({ ...user.toObject() });
-  }
-  private async comparePassword(
-    password: string,
-    hashedPassword: string,
-  ): Promise<boolean> {
-    return await bcrypt.compare(password, hashedPassword);
   }
 }

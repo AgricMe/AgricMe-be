@@ -5,7 +5,7 @@ export class CreateCompanyDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  companyName: string;
+  name: string;
 
   @ApiProperty()
   @IsString()

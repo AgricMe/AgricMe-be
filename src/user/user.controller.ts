@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Put, Body, Delete, Post } from '@nestjs/common';
+import { Controller, Get, Param, Body, Delete, Post, Patch } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserDocument } from './schema/user.schema';
@@ -7,6 +7,10 @@ import { Auth, Roles } from 'src/auth/guard/auth.decorator';
 import { RoleNames } from './enums';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { CreateCompanyDto } from './dto/create-company.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
+import { ChangeEmailDto } from './dto/change-email.dto';
+import { CreatePreferenceDto } from './dto/create-preference.dto';
+import { UpdatePreferenceDto } from './dto/update-preference.dto';
 
 @Controller('user')
 @ApiTags('User')
@@ -16,39 +20,8 @@ export class UserController {
   @ApiBearerAuth()
   @Get('profile')
   @ApiOperation({ summary: 'Get Profile' })
-  getUserProfile(@Auth() user: UserDocument) {
-    const {
-      _id,
-      firstName,
-      lastName,
-      userName,
-      email,
-      profilePicture,
-      bio,
-      phoneNumber,
-      location,
-      job,
-      interest,
-      verificationStatus,
-      role,
-      __v,
-    } = user;
-    return {
-      _id,
-      firstName,
-      lastName,
-      userName,
-      email,
-      profilePicture,
-      bio,
-      phoneNumber,
-      location,
-      job,
-      interest,
-      verificationStatus,
-      role,
-      __v,
-    };
+  async getUserProfile(@Auth() user: UserDocument) {
+    return await this.userService.findOne(user?._id.toString());
   }
 
   @ApiBearerAuth()
@@ -67,7 +40,7 @@ export class UserController {
   }
 
   @ApiBearerAuth()
-  @Put(':userId')
+  @Patch(':userId')
   @Roles([RoleNames.BUYER, RoleNames.SELLER, RoleNames.SERVICE_PROVIDER])
   @ApiOperation({ summary: 'Update Profile' })
   updateUserProfile(
@@ -82,30 +55,75 @@ export class UserController {
   @Roles([RoleNames.SELLER, RoleNames.SERVICE_PROVIDER])
   @ApiOperation({ summary: 'Create User Company' })
   createCompany(
+    @Auth() user: UserDocument,
     @Body() createCompanyDto: CreateCompanyDto,
   ) {
-    return this.userService.createUserCompany(createCompanyDto);
+    return this.userService.createUserCompany(user,createCompanyDto);
   }
 
   @ApiBearerAuth()
-  @Get('company/:companyId')
+  @Get('company/profile')
   @Roles([RoleNames.SELLER, RoleNames.SERVICE_PROVIDER])
   @ApiOperation({ summary: 'Get User\'s Company Profile' })
   getCompanyProfile(
-    @Param('companyId') companyId: string,
+    @Auth() user: UserDocument,
   ) {
-    return this.userService.findUserCompany(companyId);
+    return this.userService.findUserCompany(user);
   }
 
   @ApiBearerAuth()
-  @Put('company/:companyId')
+  @Patch('company/profile')
   @Roles([RoleNames.SELLER, RoleNames.SERVICE_PROVIDER])
   @ApiOperation({ summary: 'Update User\'s Company Profile' })
   updateCompanyProfile(
-    @Param('companyId') companyId: string,
+    @Auth() user: UserDocument,
     @Body() updateCompanyDto: UpdateCompanyDto,
   ) {
-    return this.userService.updateUserCompany(companyId, updateCompanyDto);
+    return this.userService.updateUserCompany(user, updateCompanyDto);
+  }
+
+  @ApiBearerAuth()
+  @Post('change-email')
+  @Roles([RoleNames.BUYER,RoleNames.SELLER, RoleNames.SERVICE_PROVIDER])
+  @ApiOperation({ summary: 'Change Email' })
+  changeEmail(
+    @Auth() user: UserDocument,
+    @Body() changeEmailDto: ChangeEmailDto,
+  ) {
+    return this.userService.changeEmail(user,changeEmailDto);
+  }
+
+  @ApiBearerAuth()
+  @Post('change-password')
+  @Roles([RoleNames.BUYER,RoleNames.SELLER, RoleNames.SERVICE_PROVIDER])
+  @ApiOperation({ summary: 'Change Password' })
+  changePassword(
+    @Auth() user: UserDocument,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ) {
+    return this.userService.changePassword(user,changePasswordDto);
+  }
+
+  @ApiBearerAuth()
+  @Post('preference')
+  @Roles([RoleNames.BUYER,RoleNames.SELLER, RoleNames.SERVICE_PROVIDER])
+  @ApiOperation({ summary: 'Create User Preference' })
+  createPreference(
+    @Auth() user: UserDocument,
+    @Body() createPreferenceDto: CreatePreferenceDto,
+  ) {
+    return this.userService.createUserPreference(user,createPreferenceDto);
+  }
+
+  @ApiBearerAuth()
+  @Patch('/preference/update')
+  @Roles([RoleNames.BUYER,RoleNames.SELLER, RoleNames.SERVICE_PROVIDER])
+  @ApiOperation({ summary: 'Update User Preference' })
+  updatePreference(
+    @Auth() user: UserDocument,
+    @Body() updatePreferenceDto: UpdatePreferenceDto,
+  ) {
+    return this.userService.updateUserPreference(user, updatePreferenceDto);
   }
 
   @ApiBearerAuth()

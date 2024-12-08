@@ -4,6 +4,8 @@ import { UserController } from './user.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './schema/user.schema';
 import { Company, CompanySchema } from './schema/company.schema';
+import { UtilModule } from 'src/utils/utils.module';
+import { Preference, PreferenceSchema } from './schema/preferences.schema';
 
 @Module({
   imports: [
@@ -15,8 +17,13 @@ import { Company, CompanySchema } from './schema/company.schema';
       {
         name: Company.name,
         schema: CompanySchema,
+      }, 
+      {
+        name: Preference.name,
+        schema: PreferenceSchema
       }
     ]),
+    UtilModule
   ],
   controllers: [UserController],
   providers: [UserService],

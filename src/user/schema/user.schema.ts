@@ -1,7 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 import { Interests, RoleNames, VerificationStatus } from '../enums';
-import { Company } from './company.schema';
+import { Company, CompanyDocument } from './company.schema';
+import { Preference, PreferenceDocument } from './preferences.schema';
 
 @Schema({ timestamps: true })
 export class User {
@@ -27,6 +28,9 @@ export class User {
   profilePicture: string;
 
   @Prop({})
+  coverPhoto: string;
+
+  @Prop({})
   bio: string;
 
   @Prop({})
@@ -38,6 +42,14 @@ export class User {
   location: string;
 
   @Prop({
+  })
+  address: string;
+
+  @Prop({
+  })
+  zipCode: string;
+
+  @Prop({
     required: true,
   })
   job: string;
@@ -45,7 +57,12 @@ export class User {
   @Prop({
     type: Types.ObjectId, ref: Company.name
   })
-  company?: Company;
+  company?: CompanyDocument;
+
+  @Prop({
+    type: Types.ObjectId, ref: Preference.name
+  })
+  preference: PreferenceDocument;
 
   @Prop({
     type: [String],

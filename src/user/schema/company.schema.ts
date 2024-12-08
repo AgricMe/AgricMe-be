@@ -1,12 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { Interests, RoleNames, VerificationStatus } from '../enums';
-import { User } from './user.schema';
+import { UserDocument } from './user.schema';
 
 @Schema({ timestamps: true })
 export class Company {
   @Prop({ required: true, unique: true })
-  companyName: string;
+  name: string;
 
   @Prop({ required: true })
   fullName: string;
@@ -20,10 +19,10 @@ export class Company {
   @Prop({ required: true })
   CACNumber: string;
 
-  @Prop({})
+  @Prop({required: true})
   countryCode: string;
 
-  @Prop({})
+  @Prop({required: true})
   phoneNumber: string;
 
   @Prop({
@@ -34,7 +33,7 @@ export class Company {
   @Prop({
     type: Types.ObjectId, ref: 'User'
   })
-  owner: User;
+  owner: UserDocument;
 }
 
 export type CompanyDocument = HydratedDocument<Company>;

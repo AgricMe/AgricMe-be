@@ -10,72 +10,78 @@ import {
 import { Interests, RoleNames } from '../enums';
 
 export class SignUpDto {
-  @ApiProperty({ example: 'jane' })
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   firstName: string;
 
-  @ApiProperty({ example: 'doe' })
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   lastName: string;
 
-  @ApiProperty({ example: 'janedoe123' })
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   userName: string;
 
-  @ApiProperty({ example: 'janedoe@gmail.com' })
+  @ApiProperty()
   @IsEmail()
   @IsNotEmpty()
   email: string;
 
-  @ApiProperty({ example: 'jane123' })
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   password: string;
 
-  @ApiProperty({
-    example:
-      'https://res.cloudinary.com/dynopc0cn/image/upload/v1728734784/avatar_ym1ctb.jpg',
-  })
+  @ApiProperty()
   @IsString()
   @IsOptional()
   profilePicture?: string;
 
-  @ApiProperty({ example: 'About yourself' })
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  coverPhoto?: string;
+
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   bio: string;
 
-  @ApiProperty({ example: '+2347020654422' })
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   phoneNumber: string;
 
-  @ApiProperty({ example: 'Ibadan, Oyo State' })
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   location: string;
 
-  @ApiProperty({ example: 'Irrigation Specialist' })
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  address?: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  zipCode?: string;
+
+  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   job: string;
 
-  @ApiProperty({
-    example: [
-      Interests.SERVICE_PROVIDER,
-      Interests.ANIMAL_PRODUCTION,
-      Interests.FARMING,
-    ],
-  })
+  @ApiProperty()
   @IsArray()
   @IsEnum(Interests, { each: true })
   @IsNotEmpty()
   interest: Interests[];
 
-  @ApiProperty({ example: [RoleNames.SERVICE_PROVIDER] })
+  @ApiProperty()
   @IsArray()
   @IsEnum(RoleNames, { each: true })
   @IsNotEmpty()
