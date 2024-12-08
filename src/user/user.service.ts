@@ -148,7 +148,7 @@ export class UserService {
     const foundUser = await this.userModel.findById(user?._id);
     const userPreferenceExists = await this.preferenceModel.findOne({user: foundUser?._id})
     if(userPreferenceExists){
-      throw new BadRequestException('You have an existing preference, please continue to edit')
+      throw new BadRequestException('You have an existing preference, please continue to edit/update')
     }
     const preference = await this.preferenceModel.create({...createPreferenceDto, user: foundUser?._id});
     foundUser.preference = preference;
@@ -160,19 +160,19 @@ export class UserService {
     user: UserDocument,
     updatePreferenceDto: UpdatePreferenceDto,
   ): Promise<PreferenceDocument> {
-    // const foundUser = await this.userModel.findById(user?._id);
-    const userPreferenceExists = await this.preferenceModel.findOne({user: user?._id})
-    if(userPreferenceExists){
+    const foundUser = await this.userModel.findById(user?._id);
+    const userPreferenceExists = await this.preferenceModel.findOne({user: foundUser?._id});
+    if(!userPreferenceExists){
       throw new BadRequestException('You do not have any existing preference, please create preference')
     }
     const preference = await this.preferenceModel.findOneAndUpdate(
-      {user: user?._id},
+      {user: foundUser?._id},
       updatePreferenceDto,
       {
         new: true,
         runValidators: true,
       },
-    );
+    );    
     return preference;
   }
 
