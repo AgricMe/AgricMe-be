@@ -6,9 +6,13 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailModule } from 'src/mail/mail.module';
 import { UtilModule } from 'src/utils/utils.module';
+import { PassportModule } from '@nestjs/passport';
+import { GoogleOAuthStrategy } from './strategies/google-oauth.strategy';
+import { FacebookAuthStrategy } from './strategies/facebook-auth.strategy';
 
 @Module({
   imports: [
+    PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -25,7 +29,7 @@ import { UtilModule } from 'src/utils/utils.module';
     MailModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, GoogleOAuthStrategy, FacebookAuthStrategy],
   exports: [JwtModule],
 })
 export class AuthModule {}

@@ -8,6 +8,7 @@ import {
   IsString,
 } from 'class-validator';
 import { Interests, RoleNames } from '../enums';
+import { Expose } from 'class-transformer';
 
 export class SignUpDto {
   @ApiProperty()
@@ -85,5 +86,23 @@ export class SignUpDto {
   @IsArray()
   @IsEnum(RoleNames, { each: true })
   @IsNotEmpty()
+  role: RoleNames[];
+}
+
+
+export class UserResponseDto {
+  @Expose()
+  email: string;
+
+  @Expose()
+  firstName: string;
+
+  @Expose()
+  lastName: string;
+
+  @Expose()
+  userName: string;
+
+  @Expose()
   role: RoleNames[];
 }

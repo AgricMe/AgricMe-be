@@ -26,12 +26,14 @@ async function bootstrap() {
     .setDescription('AgriTech App API Documentation')
     .setVersion('1.0.0')
     .addBearerAuth()
-    .addServer('https://agricme-be.onrender.com')
+    // .addServer('https://agricme-be.onrender.com')
     .build();
   const swaggerDoc = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('/docs', app, swaggerDoc);
 
   const configService = app.get(ConfigService);
-  await app.listen(configService.get('port'));
+  const port = configService.get('port');
+  await app.listen(port);
+  console.info(`Server is running on port ${port}`)
 }
 bootstrap();

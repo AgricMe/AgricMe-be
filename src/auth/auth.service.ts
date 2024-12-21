@@ -43,6 +43,10 @@ export class AuthService {
       throw new NotFoundException('User does not exist');
     }
 
+    if(!user.password){
+      throw new BadRequestException('Unable to login, try signing in with your google/facebook account');
+    }
+    
     const isMatch = await this.utilService.comparePassword(
       loginDto.password,
       user.password,

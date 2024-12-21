@@ -17,6 +17,9 @@ import { ChangeEmailDto } from './dto/change-email.dto';
 import { Preference, PreferenceDocument } from './schema/preferences.schema';
 import { CreatePreferenceDto } from './dto/create-preference.dto';
 import { UpdatePreferenceDto } from './dto/update-preference.dto';
+import { Profile as GProfile } from 'passport-google-oauth20';
+import { Profile as FProfile } from 'passport-facebook';
+import { Interests, RoleNames } from './enums';
 
 @Injectable()
 export class UserService {
@@ -44,6 +47,50 @@ export class UserService {
     if (!user) {
       throw new NotFoundException(`User with id ${userId} is not found`);
     }
+    return user;
+  }
+
+  async googleAuthFindOrCreate(profile: GProfile): Promise<User> {
+    const { emails, name, photos} = profile;
+    const email = emails[0]?.value;
+    const userName =  `${name.givenName}_${name.familyName}`;
+    let user = await this.findUserByEmail(email);
+    
+    if (!user) {
+      user = await this.userModel.create({
+        firstName: name.givenName,
+        lastName: name.familyName,
+        userName: userName.toLowerCase(),
+        email,
+        profilePicture: photos[0]?.value,
+        job: '',
+        interest: [Interests.AGRIC_BUSINESSES],
+        role: [RoleNames.BUYER]
+      });
+    }
+
+    return user;
+  }
+
+  async facebookAuthFindOrCreate(profile: FProfile): Promise<User> {
+    const { emails, name, photos} = profile;
+    const email = emails[0]?.value;
+    const userName =  `${name.givenName}_${name.familyName}`;
+    let user = await this.findUserByEmail(email);
+    
+    if (!user) {
+      user = await this.userModel.create({
+        firstName: name.givenName,
+        lastName: name.familyName,
+        userName: userName.toLowerCase(),
+        email,
+        profilePicture: photos[0]?.value,
+        job: '',
+        interest: [Interests.AGRIC_BUSINESSES],
+        role: [RoleNames.BUYER]
+      });
+    }
+
     return user;
   }
 
