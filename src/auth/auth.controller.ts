@@ -18,8 +18,8 @@ import { UserDocument } from 'src/user/schema/user.schema';
 import { UtilService } from 'src/utils/utils.service';
 import { GoogleOAuthGuard } from './guard/google-oauth.guard';
 import { JwtService } from '@nestjs/jwt';
-import { plainToInstance } from 'class-transformer';
 import { FacebookAuthGuard } from './guard/facebook-auth.guard';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -28,6 +28,7 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly utilService: UtilService,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   @IsPublic()
@@ -59,16 +60,11 @@ export class AuthController {
   @IsPublic()
   @Get('google/redirect')
   @UseGuards(GoogleOAuthGuard)
-  async googleAuthRedirect(@Auth() user) {
+  async googleAuthRedirect(@Auth() user, @Res() res: Response) {
     const payload = { email: user.email, sub: user._id };
     const access_token = await this.jwtService.signAsync(payload);
 
-    return {
-      access_token,
-      user: plainToInstance(UserResponseDto, user, {
-        excludeExtraneousValues: true,
-      }),
-    };
+    return res.redirect(`${this.configService.get<string>('frontendUrl')}/google-auth/callback?access_token=${access_token}`);
   }
 
   @IsPublic()
@@ -80,15 +76,10 @@ export class AuthController {
   @IsPublic()
   @Get('facebook/redirect')
   @UseGuards(FacebookAuthGuard)
-  async facebookAuthRedirect(@Auth() user) {
+  async facebookAuthRedirect(@Auth() user, @Res() res: Response) {
     const payload = { email: user.email, sub: user._id };
     const access_token = await this.jwtService.signAsync(payload);
 
-    return {
-      access_token,
-      user: plainToInstance(UserResponseDto, user, {
-        excludeExtraneousValues: true,
-      }),
-    };
+    return res.redirect(`${this.configService.get<string>('frontendUrl')}/google-auth/callback?access_token=${access_token}`);
   }
 }

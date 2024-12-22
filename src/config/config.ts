@@ -10,4 +10,5 @@ export default () => ({
   facebookAppId: process.env.FACEBOOK_APP_ID,
   facebookAppSecret: process.env.FACEBOOK_APP_SECRET,
   facebookCallBackUrl: process.env.FACEBOOK_CALLBACK_URL,
+  frontendUrl: process.env.FRONTEND_URL
 });
