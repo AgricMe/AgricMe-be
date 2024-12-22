@@ -37,7 +37,7 @@ export class User {
   phoneNumber: string;
 
   @Prop({
-    required: true,
+    // required: true,
   })
   location: string;
 
@@ -50,7 +50,7 @@ export class User {
   zipCode: string;
 
   @Prop({
-    required: true,
+    // required: true,
   })
   job: string;
 

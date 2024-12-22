@@ -20,6 +20,7 @@ import { UpdatePreferenceDto } from './dto/update-preference.dto';
 import { Profile as GProfile } from 'passport-google-oauth20';
 import { Profile as FProfile } from 'passport-facebook';
 import { Interests, RoleNames } from './enums';
+import { constants } from 'fs/promises';
 
 @Injectable()
 export class UserService {
@@ -53,7 +54,7 @@ export class UserService {
   async googleAuthFindOrCreate(profile: GProfile): Promise<User> {
     const { emails, name, photos} = profile;
     const email = emails[0]?.value;
-    const userName =  `${name.givenName}_${name.familyName}`;
+    const userName = `${name.givenName}_${name.familyName}`;
     let user = await this.findUserByEmail(email);
     
     if (!user) {
@@ -63,7 +64,6 @@ export class UserService {
         userName: userName.toLowerCase(),
         email,
         profilePicture: photos[0]?.value,
-        job: '',
         interest: [Interests.AGRIC_BUSINESSES],
         role: [RoleNames.BUYER]
       });
@@ -73,9 +73,14 @@ export class UserService {
   }
 
   async facebookAuthFindOrCreate(profile: FProfile): Promise<User> {
-    const { emails, name, photos} = profile;
-    const email = emails[0]?.value;
-    const userName =  `${name.givenName}_${name.familyName}`;
+    const { emails, name, photos } = profile;
+    const userName = `${name.givenName}_${name.familyName}`;
+    const email = emails && emails[0] ? emails[0]?.value : null;
+
+    if (!email) {
+      throw new Error("Email not provided by Facebook. Please check your privacy settings.");
+    }
+    
     let user = await this.findUserByEmail(email);
     
     if (!user) {
@@ -85,7 +90,6 @@ export class UserService {
         userName: userName.toLowerCase(),
         email,
         profilePicture: photos[0]?.value,
-        job: '',
         interest: [Interests.AGRIC_BUSINESSES],
         role: [RoleNames.BUYER]
       });
