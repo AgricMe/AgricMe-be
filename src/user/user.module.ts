@@ -6,6 +6,7 @@ import { User, UserSchema } from './schema/user.schema';
 import { Company, CompanySchema } from './schema/company.schema';
 import { UtilModule } from 'src/utils/utils.module';
 import { Preference, PreferenceSchema } from './schema/preferences.schema';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { Preference, PreferenceSchema } from './schema/preferences.schema';
         schema: PreferenceSchema
       }
     ]),
-    UtilModule
+    UtilModule,
+    MailModule
   ],
   controllers: [UserController],
   providers: [UserService],

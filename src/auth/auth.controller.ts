@@ -61,8 +61,7 @@ export class AuthController {
   @Get('google/redirect')
   @UseGuards(GoogleOAuthGuard)
   async googleAuthRedirect(@Auth() user, @Res() res: Response) {
-    const payload = { email: user.email, sub: user._id };
-    const access_token = await this.jwtService.signAsync(payload);
+    const access_token = await this.jwtService.signAsync({ ...user.toObject() });
 
     return res.redirect(`${this.configService.get<string>('frontendUrl')}/google-auth/callback?access_token=${access_token}`);
   }
@@ -77,8 +76,7 @@ export class AuthController {
   @Get('facebook/redirect')
   @UseGuards(FacebookAuthGuard)
   async facebookAuthRedirect(@Auth() user, @Res() res: Response) {
-    const payload = { email: user.email, sub: user._id };
-    const access_token = await this.jwtService.signAsync(payload);
+    const access_token = await this.jwtService.signAsync({ ...user.toObject() });
 
     return res.redirect(`${this.configService.get<string>('frontendUrl')}/google-auth/callback?access_token=${access_token}`);
   }

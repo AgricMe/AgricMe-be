@@ -20,7 +20,7 @@ import { UpdatePreferenceDto } from './dto/update-preference.dto';
 import { Profile as GProfile } from 'passport-google-oauth20';
 import { Profile as FProfile } from 'passport-facebook';
 import { Interests, RoleNames } from './enums';
-import { constants } from 'fs/promises';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class UserService {
@@ -28,7 +28,8 @@ export class UserService {
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
     @InjectModel(Company.name) private readonly companyModel: Model<CompanyDocument>,
     @InjectModel(Preference.name) private readonly preferenceModel: Model<PreferenceDocument>,
-    private readonly utilService: UtilService
+    private readonly utilService: UtilService,
+    private readonly mailService: MailService
   ) {}
   async create(signUpDto: SignUpDto): Promise<UserDocument> {
     const userExists = await this.findUserByEmail(signUpDto.email);
@@ -67,6 +68,14 @@ export class UserService {
         interest: [Interests.AGRIC_BUSINESSES],
         role: [RoleNames.BUYER]
       });
+      await this.mailService.sendMail({
+      to: user.email,
+      subject: 'AgricMe - Registration Successful',
+      template: 'registration',
+      context: {
+        firstName: user.firstName,
+      },
+    });
     }
 
     return user;

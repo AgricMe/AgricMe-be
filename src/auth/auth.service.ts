@@ -44,7 +44,7 @@ export class AuthService {
     }
 
     if(!user.password){
-      throw new BadRequestException('Unable to login, try signing in with your google/facebook account');
+      throw new BadRequestException('Unable to login, try signing in with your google account');
     }
     
     const isMatch = await this.utilService.comparePassword(
