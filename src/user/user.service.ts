@@ -45,7 +45,7 @@ export class UserService {
   }
 
   async findOne(userId: string): Promise<UserDocument> {
-    const user = await this.userModel.findById(userId, '-password')?.populate([{path: 'company'}, {path: 'preference'}]);
+    const user = await this.userModel.findById(userId, '-password')?.populate([{ path: 'company'}, { path: 'preference'}]);
     if (!user) {
       throw new NotFoundException(`User with id ${userId} is not found`);
     }
