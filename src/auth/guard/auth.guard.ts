@@ -49,7 +49,7 @@ export class AuthGuard implements CanActivate {
 
   private async validateToken(req: Request) {
     try {
-      const token = req.cookies.access_token;
+      const token = req.cookies['access_token'];
 
       if (!token) {
         throw new UnauthorizedException('No token provided');

@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -20,15 +21,16 @@ async function bootstrap() {
   );
   app.use(helmet());
   app.enableCors({
-    origin: ['http://localhost:3000', 'https://agricme.onrender.com'],
+    origin: ['http://localhost:3000/', 'https://agricme.onrender.com/'],
     credentials: true,
   });
+  app.use(cookieParser());
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('AgricMe API')
     .setDescription('AgriTech App API Documentation')
     .setVersion('1.0.0')
-    .addBearerAuth()
+    .addCookieAuth()
     // .addServer('https://agricme-be.onrender.com')
     .build();
   const swaggerDoc = SwaggerModule.createDocument(app, swaggerConfig);

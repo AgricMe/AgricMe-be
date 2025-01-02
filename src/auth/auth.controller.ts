@@ -52,7 +52,7 @@ export class AuthController {
       maxAge: 86400000,
       httpOnly: true,
       secure: true,
-      sameSite: 'strict',
+      sameSite: 'none',
     });
     res.json({
       message: 'Login successful',
