@@ -54,6 +54,9 @@ export class AuthController {
       secure: true,
       sameSite: 'strict',
     });
+    return {
+      message: 'Login successful'
+    }
   }
 
   @IsPublic()
@@ -69,16 +72,16 @@ export class AuthController {
       ...user.toObject(),
     });
 
-    return res.cookie('access_token', access_token, {
+    res.cookie('access_token', access_token, {
       maxAge: 86400000,
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
     });
 
-    // return res.redirect(
-    //   `${this.configService.get<string>('frontendUrl')}/google-auth/callback?access_token=${access_token}`,
-    // );
+    return res.redirect(
+      `${this.configService.get<string>('frontendUrl')}/google-auth/callback`,
+    );
   }
 
   @IsPublic()
@@ -94,15 +97,15 @@ export class AuthController {
       ...user.toObject(),
     });
 
-    return res.cookie('access_token', access_token, {
+    res.cookie('access_token', access_token, {
       maxAge: 86400000,
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
     });
 
-    // return res.redirect(
-    //   `${this.configService.get<string>('frontendUrl')}/google-auth/callback?access_token=${access_token}`,
-    // );
+    return res.redirect(
+      `${this.configService.get<string>('frontendUrl')}/google-auth/callback`,
+    );
   }
 }

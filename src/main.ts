@@ -9,7 +9,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.use(express.json({ limit: '10mb' }));
+  app.use(express.json({ limit: '50mb' }));
   app.disable('x-powered-by');
   app.useGlobalPipes(
     new ValidationPipe({
