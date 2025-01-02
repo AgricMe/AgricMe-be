@@ -54,9 +54,9 @@ export class AuthController {
       secure: true,
       sameSite: 'strict',
     });
-    return {
-      message: 'Login successful'
-    }
+    res.json({
+      message: 'Login successful',
+    });
   }
 
   @IsPublic()
@@ -80,7 +80,7 @@ export class AuthController {
     });
 
     return res.redirect(
-      `${this.configService.get<string>('frontendUrl')}/google-auth/callback`,
+      `${this.configService.get<string>('frontendUrl')}/google-auth/callback?isAuthenticated=true`,
     );
   }
 
@@ -105,7 +105,7 @@ export class AuthController {
     });
 
     return res.redirect(
-      `${this.configService.get<string>('frontendUrl')}/google-auth/callback`,
+      `${this.configService.get<string>('frontendUrl')}/google-auth/callback?isAuthenticated=true`,
     );
   }
 }
