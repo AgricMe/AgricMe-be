@@ -49,13 +49,8 @@ export class AuthGuard implements CanActivate {
 
   private async validateToken(req: Request) {
     try {
-      const authHeader = req.headers['authorization'];
+      const token = req.cookies.access_token;
 
-      if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        throw new UnauthorizedException('Unauthorized');
-      }
-
-      const token = authHeader.split(' ')[1];
       if (!token) {
         throw new UnauthorizedException('No token provided');
       }

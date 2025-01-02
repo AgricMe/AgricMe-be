@@ -47,37 +47,48 @@ export class AuthController {
   @Post('login')
   @ApiOperation({ summary: 'Login' })
   async login(@Res() res: Response, @Body() loginDto: LoginDto) {
-    const accessToken = await this.authService.login(loginDto);
-    res.json({ accessToken });
+    const access_token = await this.authService.login(loginDto);
+    res.cookie('access_token', access_token, {
+      maxAge: 86400000,
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
   }
 
   @IsPublic()
   @Get('google')
   @UseGuards(GoogleOAuthGuard)
-  async googleAuth() {
-  }
+  async googleAuth() {}
 
   @IsPublic()
   @Get('google/redirect')
   @UseGuards(GoogleOAuthGuard)
   async googleAuthRedirect(@Auth() user, @Res() res: Response) {
-    const access_token = await this.jwtService.signAsync({ ...user.toObject() });
+    const access_token = await this.jwtService.signAsync({
+      ...user.toObject(),
+    });
 
-    return res.redirect(`${this.configService.get<string>('frontendUrl')}/google-auth/callback?access_token=${access_token}`);
+    return res.redirect(
+      `${this.configService.get<string>('frontendUrl')}/google-auth/callback?access_token=${access_token}`,
+    );
   }
 
   @IsPublic()
   @Get('facebook')
   @UseGuards(FacebookAuthGuard)
-  async facebookAuth() {
-  }
+  async facebookAuth() {}
 
   @IsPublic()
   @Get('facebook/redirect')
   @UseGuards(FacebookAuthGuard)
   async facebookAuthRedirect(@Auth() user, @Res() res: Response) {
-    const access_token = await this.jwtService.signAsync({ ...user.toObject() });
+    const access_token = await this.jwtService.signAsync({
+      ...user.toObject(),
+    });
 
-    return res.redirect(`${this.configService.get<string>('frontendUrl')}/google-auth/callback?access_token=${access_token}`);
+    return res.redirect(
+      `${this.configService.get<string>('frontendUrl')}/google-auth/callback?access_token=${access_token}`,
+    );
   }
 }

@@ -6,7 +6,6 @@ import {
 import { SignUpDto } from 'src/user/dto/signup-user.dto';
 import { LoginDto } from 'src/user/dto/login-user.dto';
 import { UserService } from 'src/user/user.service';
-import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { UserDocument } from 'src/user/schema/user.schema';
 import { MailService } from 'src/mail/mail.service';
