@@ -69,9 +69,16 @@ export class AuthController {
       ...user.toObject(),
     });
 
-    return res.redirect(
-      `${this.configService.get<string>('frontendUrl')}/google-auth/callback?access_token=${access_token}`,
-    );
+    return res.cookie('access_token', access_token, {
+      maxAge: 86400000,
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
+
+    // return res.redirect(
+    //   `${this.configService.get<string>('frontendUrl')}/google-auth/callback?access_token=${access_token}`,
+    // );
   }
 
   @IsPublic()
@@ -87,8 +94,15 @@ export class AuthController {
       ...user.toObject(),
     });
 
-    return res.redirect(
-      `${this.configService.get<string>('frontendUrl')}/google-auth/callback?access_token=${access_token}`,
-    );
+    return res.cookie('access_token', access_token, {
+      maxAge: 86400000,
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
+
+    // return res.redirect(
+    //   `${this.configService.get<string>('frontendUrl')}/google-auth/callback?access_token=${access_token}`,
+    // );
   }
 }
