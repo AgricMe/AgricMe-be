@@ -19,7 +19,10 @@ async function bootstrap() {
     }),
   );
   app.use(helmet());
-  app.enableCors();
+  app.enableCors({
+    origin: ['http://localhost:3000', 'https://agricme.onrender.com'],
+    credentials: true,
+  });
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('AgricMe API')
@@ -34,6 +37,6 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get('port');
   await app.listen(port);
-  console.info(`Server is running on port ${port}`)
+  console.info(`Server is running on port ${port}`);
 }
 bootstrap();
