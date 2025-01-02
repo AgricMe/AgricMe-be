@@ -20,7 +20,9 @@ import { FacebookAuthStrategy } from './strategies/facebook-auth.strategy';
         return {
           global: true,
           secret: configService.get<string>('jwtSecret'),
-          signOptions: { expiresIn: '1d' },
+          signOptions: {
+            expiresIn: '1d',
+          },
         };
       },
     }),

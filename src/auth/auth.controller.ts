@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpDto, UserResponseDto } from 'src/user/dto/signup-user.dto';
-import { LoginDto } from 'src/user/dto/login-user.dto';
+import { LoginDto, SignInDto } from 'src/user/dto/login-user.dto';
 import { Response } from 'express';
 import { Auth, IsPublic } from './guard/auth.decorator';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -60,6 +60,27 @@ export class AuthController {
   }
 
   @IsPublic()
+  @HttpCode(HttpStatus.OK)
+  @Post('access_token-signIn')
+  @ApiOperation({ summary: 'SignIn with access_token' })
+  async signInWithAccessToken(
+    @Res() res: Response,
+    @Body() signInDto: SignInDto,
+  ) {
+    const access_token =
+      await this.authService.signInWithAccessToken(signInDto);
+    res.cookie('access_token', access_token, {
+      maxAge: 86400000,
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+    });
+    res.json({
+      message: 'SignIn successful',
+    });
+  }
+
+  @IsPublic()
   @Get('google')
   @UseGuards(GoogleOAuthGuard)
   async googleAuth() {}
@@ -68,32 +89,34 @@ export class AuthController {
   @Get('google/redirect')
   @UseGuards(GoogleOAuthGuard)
   async googleAuthRedirect(@Auth() user, @Res() res: Response) {
-    const access_token = await this.jwtService.signAsync({
-      ...user.toObject(),
-    });
-    
+    const userPayload = { ...user.toObject() };
+    const access_token = await this.jwtService.signAsync(
+      {
+        email: userPayload.email,
+      },
+      { expiresIn: '1m' },
+    );
+
     res.redirect(
       `${this.configService.get<string>('frontendUrl')}/google-auth/callback?access_token=${access_token}`,
     );
-    
   }
 
-  @IsPublic()
-  @Get('facebook')
-  @UseGuards(FacebookAuthGuard)
-  async facebookAuth() {}
+  // @IsPublic()
+  // @Get('facebook')
+  // @UseGuards(FacebookAuthGuard)
+  // async facebookAuth() {}
 
-  @IsPublic()
-  @Get('facebook/redirect')
-  @UseGuards(FacebookAuthGuard)
-  async facebookAuthRedirect(@Auth() user, @Res() res: Response) {
-    const access_token = await this.jwtService.signAsync({
-      ...user.toObject(),
-    });
+  // @IsPublic()
+  // @Get('facebook/redirect')
+  // @UseGuards(FacebookAuthGuard)
+  // async facebookAuthRedirect(@Auth() user, @Res() res: Response) {
+  //   const access_token = await this.jwtService.signAsync({
+  //     ...user.toObject(),
+  //   });
 
-
-    return res.redirect(
-      `${this.configService.get<string>('frontendUrl')}/google-auth/callback?access_token=${access_token}`,
-    );
-  }
+  //   return res.redirect(
+  //     `${this.configService.get<string>('frontendUrl')}/google-auth/callback?access_token=${access_token}`,
+  //   );
+  // }
 }

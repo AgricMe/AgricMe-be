@@ -4,12 +4,13 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { SignUpDto } from 'src/user/dto/signup-user.dto';
-import { LoginDto } from 'src/user/dto/login-user.dto';
+import { LoginDto, SignInDto } from 'src/user/dto/login-user.dto';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { UserDocument } from 'src/user/schema/user.schema';
 import { MailService } from 'src/mail/mail.service';
 import { UtilService } from 'src/utils/utils.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +19,7 @@ export class AuthService {
     private jwtService: JwtService,
     private mailService: MailService,
     private utilService: UtilService,
+    private configService: ConfigService,
   ) {}
 
   async register(signUpDto: SignUpDto): Promise<Partial<UserDocument>> {
@@ -42,10 +44,12 @@ export class AuthService {
       throw new NotFoundException('User does not exist');
     }
 
-    if(!user.password){
-      throw new BadRequestException('Unable to login, try signing in with your google account');
+    if (!user.password) {
+      throw new BadRequestException(
+        'Unable to login, try signing in with your google account',
+      );
     }
-    
+
     const isMatch = await this.utilService.comparePassword(
       loginDto.password,
       user.password,
@@ -53,6 +57,23 @@ export class AuthService {
     if (!isMatch) {
       throw new BadRequestException('Incorrect password');
     }
+    return await this.jwtService.signAsync({ ...user.toObject() });
+  }
+
+  async signInWithAccessToken(signInDto: SignInDto): Promise<string> {
+    const payload = await this.jwtService.verifyAsync<UserDocument>(
+      signInDto.access_token,
+      {
+        secret: this.configService.get<string>('jwtSecret'),
+      },
+    );
+    const user: UserDocument = await this.userService.findUserByEmail(
+      payload.email,
+    );
+    if (!user) {
+      throw new NotFoundException('User does not exist');
+    }
+
     return await this.jwtService.signAsync({ ...user.toObject() });
   }
 }
