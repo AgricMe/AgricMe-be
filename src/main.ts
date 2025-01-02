@@ -21,7 +21,7 @@ async function bootstrap() {
   );
   app.use(helmet());
   app.enableCors({
-    origin: ['http://localhost:3000/', 'https://agricme.onrender.com/'],
+    origin: ['http://localhost:3000', 'https://agricme.onrender.com'],
     credentials: true,
   });
   app.use(cookieParser());
