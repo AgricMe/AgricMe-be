@@ -36,7 +36,13 @@ export class AuthService {
     return updatedUser;
   }
 
-  async login(loginDto: LoginDto): Promise<string> {
+  async login({
+    loginDto,
+    rememberMe,
+  }: {
+    loginDto: LoginDto;
+    rememberMe: boolean;
+  }): Promise<string> {
     const user: UserDocument = await this.userService.findUserByEmail(
       loginDto.email,
     );
@@ -57,7 +63,14 @@ export class AuthService {
     if (!isMatch) {
       throw new BadRequestException('Incorrect password');
     }
-    return await this.jwtService.signAsync({ ...user.toObject() });
+
+    const rememberMeToken = await this.jwtService.signAsync(
+      { ...user.toObject() },
+      { expiresIn: '7d' },
+    );
+    const normalToken = await this.jwtService.signAsync({ ...user.toObject() });
+    const token = rememberMe ? rememberMeToken : normalToken;
+    return token;
   }
 
   async signInWithAccessToken(signInDto: SignInDto): Promise<string> {

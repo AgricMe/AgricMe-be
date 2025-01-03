@@ -7,6 +7,7 @@ import {
   HttpStatus,
   UseGuards,
   Get,
+  Query,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignUpDto, UserResponseDto } from 'src/user/dto/signup-user.dto';
@@ -46,10 +47,14 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   @ApiOperation({ summary: 'Login' })
-  async login(@Res() res: Response, @Body() loginDto: LoginDto) {
-    const access_token = await this.authService.login(loginDto);
+  async login(
+    @Res() res: Response,
+    @Body() loginDto: LoginDto,
+    @Query('rememberMe') rememberMe: boolean,
+  ) {
+    const access_token = await this.authService.login({ loginDto, rememberMe });
     res.cookie('access_token', access_token, {
-      maxAge: 86400000,
+      maxAge: rememberMe ? 604800000 : 86400000,
       httpOnly: true,
       secure: true,
       sameSite: 'none',
@@ -102,21 +107,25 @@ export class AuthController {
     );
   }
 
-  // @IsPublic()
-  // @Get('facebook')
-  // @UseGuards(FacebookAuthGuard)
-  // async facebookAuth() {}
+  @IsPublic()
+  @Get('facebook')
+  @UseGuards(FacebookAuthGuard)
+  async facebookAuth() {}
 
-  // @IsPublic()
-  // @Get('facebook/redirect')
-  // @UseGuards(FacebookAuthGuard)
-  // async facebookAuthRedirect(@Auth() user, @Res() res: Response) {
-  //   const access_token = await this.jwtService.signAsync({
-  //     ...user.toObject(),
-  //   });
+  @IsPublic()
+  @Get('facebook/redirect')
+  @UseGuards(FacebookAuthGuard)
+  async facebookAuthRedirect(@Auth() user, @Res() res: Response) {
+    const userPayload = { ...user.toObject() };
+    const access_token = await this.jwtService.signAsync(
+      {
+        email: userPayload.email,
+      },
+      { expiresIn: '1m' },
+    );
 
-  //   return res.redirect(
-  //     `${this.configService.get<string>('frontendUrl')}/google-auth/callback?access_token=${access_token}`,
-  //   );
-  // }
+    return res.redirect(
+      `${this.configService.get<string>('frontendUrl')}/google-auth/callback?access_token=${access_token}`,
+    );
+  }
 }
